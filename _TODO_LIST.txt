@@ -1,0 +1,124 @@
+SEE SOME SDL2 TIPS BELOW!!!
+
+Things i want to do with this Game:
+
+Version 1:
+
+Version 2:
+	- Things from Version  1
+		- More specific Scoring Algorithm(Prio. 3)
+[i]	- add usage of customizing Themes(This is only the concept)
+		- We want to have themes. Every Theme have different values for the same parts
+			- sounds
+				- background music
+				- rotating
+				- stone landed
+				- removement for line 1 - 3
+				- special for line 4
+				- Pause
+			- textures
+				- extra image for the blocks
+				- extra image for the complete background
+				- extra image for the gaming field // could be part of the background
+				- removement animations for each line type
+				- Controls(moving left right top bottom, start, pause...)
+			- font
+			- config file, json or something else. As example for
+				- font size - Pause
+				- font size - Title
+		- We will have extra images for special parts
+			- textures
+			- complete background
+		- For a more detailed drawing we have to change the field values(unsigned int) into struct with the information of:
+			- stone type (unsigned int) //from first version
+			- rotation state (NORTH, SOUTH...) //for examining cell blocks
+			- cell index 0 - 3 // for examinig block colums
+			
+		  For examining which texture part we have to redraw.
+		  
+		  Texture Matrix:
+		  | north | east  | south | west  |
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : NO STONE
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : QUAD 
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : LINE
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : ROOF
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : STEP LEFT
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : STEP RIGHT
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : L LEFT
+		  |1|2|3|4|1|2|3|4|1|2|3|4|1|2|3|4|	 : L RIGHT
+	
+	- create logic for cells structs
+	- extend drawing algorithm for new block texture type
+	- build example texture with easy but full shaped stones
+	- build and implement full background image
+		- create texture image
+		- extend refresh algorithm => all black refresh states on Font changing(Titel animation and scores) 
+		  have to be mapped to be the correct clipping space from background
+	- build and implement gaming field // could be part of the background.
+	- optional ???maybe remove texture switch???
+	- optional ???maybe removing plain drawing cells into own version???
+	- adding key for mute
+	- add UI LIB, there is a very good one calls nuklear. Here we have only to add our own drawing methods, rest is managed.
+
+done:
+	Version 2:
+		- removing Field Types logic large, extra large
+	Version 1:
+		- add Options UI with all kind of states
+		- change render method from event based to sheduled one with frame counter(update 60 times per second) 
+			- remove timer for automovement and replace with updatecycle count.
+			- take care for state machine, icurrently its event based and reset is ok before new assignment.
+			  Based on updatecycles, there is it possible to have a state for a lot of cycles.
+			
+			- We have move all update methods out of the event loop, and moved this into inout state handling.
+		- add animation of line removement(maybe in Version 2 first)(Prio. 2)
+		- rewrite field draw calculation for start extreme Tetris
+			- here we have to interpolate block_size
+		- Adding simple Sounds
+		- drawing algorithm one time Field and only Stone should be redrawn
+		- smoother controlling with Game State
+		- app_state		//are you in game, or in startscreen or in options
+			- input_state	//input types and so on
+			- game_state	//need input_state What was happened inside of the game like new stone, lines removed, ston moved or rotated, stone was getting fix
+			- ui_state		//need game state and input_state(custom events for animations), will decide which part of ui should be redrawn 
+				- gfx_state
+				- sfx_state
+
+Version 3:
+	- add features like:
+		- rocket, bombs different Stones away
+		- antigravity, for a specific time frame the stone movement slows down
+		- wormhole, you can goto the left and stone reaches the right side and reverse
+
+Version 4(optional but a good idea):
+	- create abstraction layer for ui, sfx and gfx. We want to have regular function and a Framework layer which will do the wohle work
+		- it should be easily to switch
+
+		
+		
+		
+Copy surface:
+   static SDL_SurfacePtr ScaledCopy(SDL_Surface* src, SDL_Rect* dstSize)
+    {
+        SDL_SurfacePtr scaledCopy(SDL_CreateRGBSurface(0, 
+            dstSize->w, dstSize->h, 
+            src->format->BitsPerPixel, 
+            src->format->Rmask, src->format->Gmask, src->format->Bmask, src->format->Amask));
+
+        // Get the old mode
+        SDL_BlendMode oldBlendMode;
+        SDL_GetSurfaceBlendMode(src, &oldBlendMode);
+
+        // Set the new mode so copying the source won't change the source
+        SDL_SetSurfaceBlendMode(src, SDL_BLENDMODE_NONE);
+
+        // Do the copy
+        if (SDL_BlitScaled(src, NULL, scaledCopy.get(), dstSize) != 0)
+        {
+            scaledCopy.reset();
+        }
+
+        // Restore the original blending mode
+        SDL_SetSurfaceBlendMode(src, oldBlendMode);
+        return scaledCopy;
+    }
