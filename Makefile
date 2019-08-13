@@ -45,13 +45,23 @@ TESTLIBDIR=-L$(BUILDPATH)
 
 UI_SRC=main.c tetris_gfx.c tetris_sfx.c tetris_ui.c tetris_input.c tetris_game.c tetris_app.c
 UI_BIN=tetris.exe
-UI_LIB=-ltetris -lmingw32 -lSDL2main -lSDL2 -static -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lvorbisfile -lvorbis -lvorbisenc -logg -lfreetype6 -lpng -lz -lm \
+#static linking against own sources check to test how much we can link statically
+#UI_LIB=-ltetris -Wl,-Bstatic -lmingw32 -Wl,-Bdynamic -lSDL2main -lSDL2 -static -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lvorbisfile -lvorbis -lvorbisenc -logg -lfreetype -lpng -lz \
+#	   -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm \
+#	   -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -mwindows
+#dynamic linking
+UI_LIB=-ltetris -Wl,-Bstatic -lmingw32 -Wl,-Bdynamic -lSDL2main -lSDL2 -static -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lvorbisfile -lvorbis -lvorbisenc -logg -lfreetype -lpng -lz \
 	   -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm \
 	   -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -mwindows
 #-mwindows
-UI_LIBDIR=-L$(BUILDPATH) \
-		  -L./../_third_/SDL2_env/SDL2_build_msys2/lib \
-		  -L./../_third_/zlib-1.2.11
+
+#static linking
+#UI_LIBDIR=-L$(BUILDPATH) \
+#		  -L./../_third_/SDL2_env/SDL2_build_msys2/lib \
+#		  -L./../_third_/zlib-1.2.11
+
+#dynamic linking
+UI_LIBDIR=-L$(BUILDPATH)
 
 UI_FONT=font.o
 UI_SFX=sfx.o
@@ -74,6 +84,8 @@ $(BUILDPATH)$(TESTBIN):
 	
 $(BUILDPATH)$(UI_BIN):
 	$(CC) $(CFLAGS) $(UI_SRC) -o $(BUILDPATH)$(UI_BIN) $(INCLUDEDIR)  $(BUILDPATH)$(UI_FONT) $(BUILDPATH)$(UI_SFX) $(BUILDPATH)$(UI_SFX2) $(BUILDPATH)$(UI_SFX3) $(BUILDPATH)$(UI_SFX4) $(BUILDPATH)$(UI_TEXTURE) $(UI_LIBDIR) $(UI_LIB) $(debug)
+	#static linking
+	ldd $(BUILDPATH)$(UI_BIN) | grep '\/mingw.*\.dll' -o | xargs -I{} cp "{}" $(BUILDPATH)
 
 $(BUILDPATH)$(UI_FONT):
 	cp ./../_third_/fonts/tele-marines/Telev2b.ttf $(BUILDPATH)tetris.ttf
