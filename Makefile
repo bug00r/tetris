@@ -49,7 +49,7 @@ UI_BIN=tetris.exe
 #UI_LIB=-ltetris -Wl,-Bstatic -lmingw32 -Wl,-Bdynamic -lSDL2main -lSDL2 -static -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lvorbisfile -lvorbis -lvorbisenc -logg -lfreetype -lpng -lz \
 #	   -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm \
 #	   -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -mwindows
-#dynamic linking
+#dynamic linking bla
 UI_LIB=-ltetris -Wl,-Bstatic -lmingw32 -Wl,-Bdynamic -lSDL2main -lSDL2 -static -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lvorbisfile -lvorbis -lvorbisenc -logg -lfreetype -lpng -lz \
 	   -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm \
 	   -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -mwindows
