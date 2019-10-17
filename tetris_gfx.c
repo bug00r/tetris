@@ -2,6 +2,7 @@
 
 EXTERN_BLOB(tetris, ttf);
 EXTERN_BLOB(texture, png);
+EXTERN_BLOB(bg, png);
 
 static bool __tetris_gfx_init_fonts(tetris_gfx_t *gfx) {
 	
@@ -50,13 +51,31 @@ static bool __tetris_gfx_init_texture(tetris_gfx_t *gfx) {
 	return true;
 }
 
+static bool __tetris_gfx_init_background(tetris_gfx_t *gfx) {
+	SDL_RWops *tex_mem = SDL_RWFromMem(&_binary_bg_png_start, (intptr_t)&_binary_bg_png_size);
+    if (tex_mem == NULL) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Load font from memory fail : %s\n",SDL_GetError());
+        return false;
+    }
+	
+	gfx->background = IMG_LoadPNG_RW(tex_mem);
+	if(!gfx->background) {
+		printf("IMG_LoadPNG_RW: %s\n", IMG_GetError());
+		return false;
+	}
+	
+	SDL_SetSurfaceBlendMode(gfx->background, SDL_BLENDMODE_BLEND);
+	
+	return true;
+}
+
 bool tetris_gfx_init(tetris_gfx_t *gfx) {
 	bool init_success = false;
 	if (gfx != NULL) {
 		gfx->color_headline.r = 64;
 		gfx->color_headline.g = 64;
 		gfx->color_headline.b = 64;
-		gfx->color_label.r = 64;
+		gfx->color_label.r = 255;
 		gfx->color_label.g = 64;
 		gfx->color_label.b = 64;
 		gfx->color_value.r = 255;
@@ -64,6 +83,7 @@ bool tetris_gfx_init(tetris_gfx_t *gfx) {
 		gfx->color_value.b = 255;
 		init_success = __tetris_gfx_init_fonts(gfx);
 		init_success &= __tetris_gfx_init_texture(gfx);
+		init_success &= __tetris_gfx_init_background(gfx);
 	}
 	return init_success;
 }

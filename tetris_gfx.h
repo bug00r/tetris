@@ -18,6 +18,7 @@ typedef struct {
 	TTF_Font *score_font;	//SDL_GFX
 	TTF_Font *level_font;	//SDL_GFX
 	SDL_Surface *texture;
+	SDL_Surface *background;
 	SDL_Color color_headline; //SDL_GFX
 	SDL_Color color_label;	  //SDL_GFX
 	SDL_Color color_value;    //SDL_GFX

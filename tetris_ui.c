@@ -1,5 +1,13 @@
 #include "tetris_ui.h"
 
+static void __tetris_ui_draw_background(tetris_ui_t *ui, SDL_Rect *part) {
+
+	if(SDL_BlitSurface(ui->gfx.background, part, ui->win_surface, part)) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Render BG fail : %s\n",SDL_GetError());
+	}
+
+}
+
 static bool __tetris_ui_init_screen(tetris_ui_t *ui) {
 
     /* Create window and renderer for given surface */
@@ -15,9 +23,10 @@ static bool __tetris_ui_init_screen(tetris_ui_t *ui) {
         return false;
     }
 	
-	SDL_SetRenderDrawColor(ui->renderer, 0x0, 0x0, 0x0, 0xFF);
-	SDL_RenderClear(ui->renderer);
-	
+	//SDL_SetRenderDrawColor(ui->renderer, 0x0, 0x0, 0x0, 0xFF);
+	//SDL_RenderClear(ui->renderer);
+	__tetris_ui_draw_background(ui, NULL);
+
 	return true;
 }
 
@@ -43,8 +52,10 @@ static void __print_tetris_score_label_sdl(tetris_ui_t *ui) {
 static void __print_tetris_score_sdl(tetris_ui_t *ui, unsigned int score) {
 
 	/* clear text */
-	tetris_gfx_draw_rect_rgba(ui->renderer, 0, 54, 126, 18, 0, 0, 0, 255);
-	
+	//tetris_gfx_draw_rect_rgba(ui->renderer, 0, 54, 126, 18, 0, 0, 0, 255);
+	SDL_RECT_LOC(rect,0, 54, 126, 18);
+	__tetris_ui_draw_background(ui, &rect);
+
 	DRAW_UINT_TXT_AT_POS( ui->win_surface, score, ui->gfx.score_font, &ui->gfx.color_value, 0, 54);
 	
 }
@@ -58,8 +69,10 @@ static void __print_tetris_level_label_sdl(tetris_ui_t *ui) {
 static void __print_tetris_level_sdl(tetris_ui_t *ui, unsigned int level) {
 
 	/* clear text */
-	tetris_gfx_draw_rect_rgba(ui->renderer, 0, 90, 126, 18, 0, 0, 0, 255);
-	
+	//tetris_gfx_draw_rect_rgba(ui->renderer, 0, 90, 126, 18, 0, 0, 0, 255);
+	SDL_RECT_LOC(rect,0,90,126,18);
+	__tetris_ui_draw_background(ui, &rect);
+
 	DRAW_UINT_TXT_AT_POS( ui->win_surface, level, ui->gfx.level_font, &ui->gfx.color_value, 0, 90);
 	
 }
@@ -72,8 +85,10 @@ static void __print_tetris_lines_label_sdl(tetris_ui_t *ui) {
 
 static void __print_tetris_lines_sdl(tetris_ui_t *ui, unsigned int lines) {
 	/* clear text */
-	tetris_gfx_draw_rect_rgba(ui->renderer, 0, 126, 126, 18, 0, 0, 0, 255);
-	
+	//tetris_gfx_draw_rect_rgba(ui->renderer, 0, 126, 126, 18, 0, 0, 0, 255);
+	SDL_RECT_LOC(rect,0, 126, 126, 18);
+	__tetris_ui_draw_background(ui, &rect);
+
 	DRAW_UINT_TXT_AT_POS( ui->win_surface, lines, ui->gfx.level_font, &ui->gfx.color_value, 0, 126);
 	
 }
@@ -138,6 +153,8 @@ static void _print_tetris_stone_cell(tetris_ui_t* ui,
 		dest.w = block_size_w;
 		dest.h = block_size_h;
 		
+		__tetris_ui_draw_background(ui, &dest);
+
 		SDL_BlitSurface(ui->gfx.texture, &src, ui->win_surface, &dest);
 		
 	}
@@ -195,15 +212,19 @@ static void __print_tetris_stone_in_game(tetris_ui_t* ui, tetris_game_t* game) {
 }
 
 static void __print_tetris_next_stone_sdl(tetris_ui_t* ui, tetris_game_t* game) {
-	
+
 	SDL_Surface * text = tetris_gfx_create_text("Next:", ui->gfx.level_font, &ui->gfx.color_label);
 	
+	__tetris_ui_draw_background(ui, &text->clip_rect);
+
 	tetris_gfx_draw_text_at_position(text ,ui->win_surface, 0, 170);
 	
 	SDL_FreeSurface(text); /* No use anymore, could be cached because its a label, need text cache */
 	
-	tetris_gfx_draw_rect_rgba(ui->renderer, 20, 200, 96, 96, 0, 0, 0, 255);
-	
+	//tetris_gfx_draw_rect_rgba(ui->renderer, 20, 200, 96, 96, 0, 0, 0, 255);
+	SDL_RECT_LOC(rect,20, 200, 96, 96);
+	__tetris_ui_draw_background(ui, &rect);
+
 	stone_direction_t direction = TETRIS_NORTH;
 	
 	__print_tetris_stone(ui, &game->next_stone, &direction, 20, 200, 24, 24, false);
